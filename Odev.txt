@@ -1,0 +1,65 @@
+Heart Disease UCI Dataset Ödevi Adımları
+Öğrencilere verilecek ödev adımları:
+
+1. Veri Yükleme ve İnceleme
+Veri setini yükleyin (heart_disease_uci.csv).
+Örnek:
+import pandas as pd
+df = pd.read_csv('heart_disease_uci.csv')
+Veri setinin genel özelliklerini inceleyin:
+Veri tipi, eksik değerler, ve sütun bilgilerini kontrol edin:
+print(df.info())
+print(df.describe())
+print(df.isnull().sum())
+2. Kategorik ve Sayısal Sütunları Ayırma
+Veri setindeki kategorik ve sayısal sütunları belirleyin.
+
+Örnek:
+
+categorical_columns = df.select_dtypes(include=['object', 'category']).columns
+numeric_columns = df.select_dtypes(include=['float64', 'int64']).columns
+print("Kategorik Sütunlar:", categorical_columns)
+print("Sayısal Sütunlar:", numeric_columns)
+3. Eksik Veri Analizi
+Eksik değerleri kontrol edin.
+Eksik veri varsa, uygun bir yöntemle doldurun (örneğin: ortalama, medyan, ya da mode).
+Örnek:
+df.fillna(df.median(), inplace=True)
+4. Encoding İşlemleri
+Kategorik sütunlara encoding uygulayın:
+
+Label Encoding: Sıralama ilişkisi olan sütunlar (örneğin: slope).
+OneHotEncoding: Sıralama ilişkisi olmayan sütunlar (örneğin: dataset, cp, restecg).
+Örnek Kod:
+
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+
+# Label Encoding
+label_encoder = LabelEncoder()
+df['sex'] = label_encoder.fit_transform(df['sex'])  # Male → 0, Female → 1
+
+# OneHotEncoding
+one_hot_encoded = pd.get_dummies(df[['dataset', 'cp', 'restecg']], drop_first=True)
+df = pd.concat([df, one_hot_encoded], axis=1)
+df.drop(['dataset', 'cp', 'restecg'], axis=1, inplace=True)
+5. Standartlaştırma İşlemi
+Belirlediğiniz Sayısal sütunlarda hedef değişkeni hariç tutarak standartlaştırma işlemi yapın.
+
+Örnek:
+
+from sklearn.preprocessing import StandardScaler
+
+target_column = 'target'
+numeric_columns = numeric_columns.drop(target_column)
+scaler = StandardScaler()
+df[numeric_columns] = scaler.fit_transform(df[numeric_columns])
+6.Verinin Son Halini csv olarak kaydedin
+Ödev ile birlikte son halini de paylaşmayı unutmayın.
+
+Ekstra (Opsiyonel)
+Modelin önem sıralamasını çıkararak hangi özelliklerin hedef değişken üzerinde en fazla etkiye sahip olduğunu analiz edin:
+ import matplotlib.pyplot as plt
+ feature_importances = pd.Series(model.feature_importances_, index=X.columns)
+ feature_importances.nlargest(10).plot(kind='barh')
+ plt.title("Özellik Önem Skorları")
+ plt.show()
